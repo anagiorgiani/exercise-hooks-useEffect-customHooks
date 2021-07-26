@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Greeting({ initialName = '' }) {
   // 🐨 inicialize o estado com o valor que vem do localStorage
+  const localStorageName = window.localStorage.getItem('name') || initialName;
   // 💰 window.localStorage.getItem('name') || initialName
-  const [name, setName] = React.useState(initialName);
+  const [name, setName] = useState(localStorageName);
+
+  useEffect(() => {
+    window.localStorage.setItem('name', name);
+  }, [name]);
 
   // 🐨 Utilize o hook useEffect para atualizar a
   // propriedade `name` no localStorage quando o estado for alterado
   // 💰 window.localStorage.setItem('name', name)
 
-  function handleChange(event) {
-    setName(event.target.value);
+  function handleChange({ target  }) {
+    setName(target.value);
   }
   return (
     <div>
