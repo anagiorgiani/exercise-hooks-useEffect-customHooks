@@ -1,18 +1,27 @@
-import React, { Component } from 'react';
-
+import React, { useState, useEffect, useContext } from 'react';
 import Posts from './components/Posts';
 import Selector from './components/Selector';
 import { Context } from './components/RedditContext';
 
-class App extends Component {
-  componentDidMount() {
-    const { fetchPosts } = this.context;
-    fetchPosts();
-  }
+function App () {
+  const {
+    fetchPosts,
+    selectedSubreddit,
+    postsBySubreddit,
+    isFetching,
+    refreshSubreddit,
 
-  renderLastUpdatedAt() {
-    const { selectedSubreddit, postsBySubreddit } = this.context;
+  } = useContext(Context); 
+
+  useEffect(() => {
+    fetchPosts();
+  }, []) 
+  
+
+ 
+  function renderLastUpdatedAt() {
     const { lastUpdated } = postsBySubreddit[selectedSubreddit];
+  
 
     if (!lastUpdated) return null;
 
@@ -23,9 +32,8 @@ class App extends Component {
     );
   }
 
-  renderRefreshButton() {
-    const { isFetching, refreshSubreddit } = this.context;
-
+  function renderRefreshButton() {
+  
     if (isFetching) return null;
 
     return (
@@ -39,8 +47,6 @@ class App extends Component {
     );
   }
 
-  render() {
-    const { selectedSubreddit, postsBySubreddit, isFetching } = this.context;
     const { items: posts = [] } = postsBySubreddit[selectedSubreddit];
     const isEmpty = posts.length === 0;
 
@@ -48,17 +54,15 @@ class App extends Component {
       <div>
         <Selector />
         <div>
-          {this.renderLastUpdatedAt()}
-          {this.renderRefreshButton()}
+          {renderLastUpdatedAt()}
+          {renderRefreshButton()}
         </div>
         {isFetching && <h2>Loading...</h2>}
         {!isFetching && isEmpty && <h2>Empty.</h2>}
         {!isFetching && !isEmpty && <Posts />}
       </div>
-    );
-  }
+    )
 }
-
-App.contextType = Context;
+    
 
 export default App;
